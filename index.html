@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini CRM Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- ================= AUTHENTICATION VIEW ================= -->
+    <div id="auth-view" class="auth-container">
+        <div class="auth-box">
+            <div class="auth-header">
+                <h2><i class="fa-solid fa-users-gear"></i>CRM Login</h2>
+                <p id="auth-subtitle">Login to your account</p>
+            </div>
+            
+            <form id="auth-form">
+                <div class="input-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" required placeholder="admin@example.com">
+                </div>
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" required placeholder="********">
+                </div>
+                <!-- Hidden by default, shown during signup -->
+                <div class="input-group" id="confirm-password-group" style="display: none;">
+                    <label for="confirm-password">Confirm Password</label>
+                    <input type="password" id="confirm-password" placeholder="********">
+                </div>
+                <button type="submit" class="btn btn-primary btn-block" id="auth-btn">Login</button>
+            </form>
+            
+            <div class="auth-footer">
+                <p id="auth-toggle-text">Don't have an account? <span class="toggle-link" id="toggle-auth">Sign up</span></p>
+            </div>
+            
+            <div id="auth-alert" class="alert hidden"></div>
+        </div>
+    </div>
+
+    <!-- ================= DASHBOARD VIEW ================= -->
+    <div id="dashboard-view" class="dashboard-container hidden">
+        
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2><i class="fa-solid fa-users-gear"></i> CRM</h2>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item active" data-view="dashboard">
+                    <i class="fa-solid fa-chart-pie"></i> Dashboard
+                </li>
+                <li class="nav-item" data-view="leads">
+                    <i class="fa-solid fa-address-book"></i> Leads
+                </li>
+            </ul>
+            <div class="sidebar-footer">
+                <button id="logout-btn" class="btn btn-outline"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Top Navigation / Header -->
+            <header class="topbar">
+                <button id="mobile-menu-btn" class="mobile-menu-btn"><i class="fa-solid fa-bars"></i></button>
+                <div class="topbar-search">
+                    <i class="fa-solid fa-search"></i>
+                    <input type="text" id="search-input" placeholder="Search leads by name or email...">
+                </div>
+                <div class="user-profile">
+                    <div class="avatar"><i class="fa-solid fa-user"></i></div>
+                    <span id="current-user-email">admin</span>
+                </div>
+            </header>
+
+            <!-- Content Views -->
+            <div class="content-wrapper">
+                
+                <!-- Dashboard Statistics View -->
+                <section id="view-dashboard" class="view-section">
+                    <h1 class="page-title">Dashboard Overview</h1>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon pink"><i class="fa-solid fa-users"></i></div>
+                            <div class="stat-info">
+                                <h3>Total Leads</h3>
+                                <p id="stat-total">0</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon sky-blue"><i class="fa-solid fa-star"></i></div>
+                            <div class="stat-info">
+                                <h3>New Leads</h3>
+                                <p id="stat-new">0</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon purple"><i class="fa-solid fa-phone"></i></div>
+                            <div class="stat-info">
+                                <h3>Contacted</h3>
+                                <p id="stat-contacted">0</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon green"><i class="fa-solid fa-check-circle"></i></div>
+                            <div class="stat-info">
+                                <h3>Converted</h3>
+                                <p id="stat-converted">0</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Leads Management View -->
+                <section id="view-leads" class="view-section hidden">
+                    <div class="page-header">
+                        <h1 class="page-title">Manage Leads</h1>
+                        <button class="btn btn-primary" id="add-lead-btn"><i class="fa-solid fa-plus"></i> Add Lead</button>
+                    </div>
+
+                    <div class="table-controls">
+                        <div class="filter-group">
+                            <label for="filter-status"><i class="fa-solid fa-filter"></i> Filter:</label>
+                            <select id="filter-status">
+                                <option value="All">All Statuses</option>
+                                <option value="New">New</option>
+                                <option value="Contacted">Contacted</option>
+                                <option value="Converted">Converted</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="leads-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Source</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="leads-table-body">
+                                <!-- Leads rows will be injected here via JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- ================= ADD / EDIT LEAD MODAL ================= -->
+    <div id="lead-modal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2 id="modal-title">Add New Lead</h2>
+            <form id="lead-form">
+                <input type="hidden" id="lead-id">
+                
+                <div class="form-row">
+                    <div class="input-group">
+                        <label for="lead-name">Full Name</label>
+                        <input type="text" id="lead-name" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="lead-email">Email</label>
+                        <input type="email" id="lead-email" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="input-group">
+                        <label for="lead-phone">Phone Number</label>
+                        <input type="tel" id="lead-phone" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="lead-source">Source</label>
+                        <select id="lead-source" required>
+                            <option value="Website">Website</option>
+                            <option value="Referral">Referral</option>
+                            <option value="Social Media">Social Media</option>
+                            <option value="Cold Call">Cold Call</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="input-group w-50" id="status-group">
+                        <label for="lead-status">Status</label>
+                        <select id="lead-status" required>
+                            <option value="New">New</option>
+                            <option value="Contacted">Contacted</option>
+                            <option value="Converted">Converted</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-outline close-modal-btn">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Lead</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ================= VIEW / ADD NOTES MODAL ================= -->
+    <div id="notes-modal" class="modal hidden">
+        <div class="modal-content notes-content">
+            <span class="close-notes-modal">&times;</span>
+            <h2>Notes for <span id="notes-lead-name" class="highlight-text"></span></h2>
+            
+            <div class="notes-history-container">
+                <ul id="notes-history-list" class="notes-list">
+                    <!-- Notes will be injected here -->
+                </ul>
+            </div>
+
+            <form id="notes-form" class="notes-form">
+                <input type="hidden" id="notes-lead-id">
+                <div class="input-group">
+                    <label for="new-note">Add a Note</label>
+                    <textarea id="new-note" rows="3" placeholder="Enter details... e.g. Left a voicemail." required></textarea>
+                </div>
+                <div class="input-group">
+                    <label for="follow-up-date">Follow-up Date (Optional)</label>
+                    <input type="date" id="follow-up-date">
+                </div>
+                <div class="modal-actions">
+                    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-paper-plane"></i> Add Note</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Global Notification Component -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
